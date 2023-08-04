@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
-const { isAuthenticated } = require("./../middleware/jwt.middleware.js"); // <== IMPORT
+const { isAuthenticated } = require("../middlewares/jwt.middleware"); // <== IMPORT
 const router = express.Router();
 
 router.get("/signup", (req, res) => {
@@ -88,11 +88,11 @@ router.post("/login", async (req, res) => {
 });
 
 /* GET route to verify the token */
-router.get("/verify", isAuthenticated, (req, res) => {
-    console.log(req.payload)
-    const currentUser = await User.findById(req.payload._id)
+router.get("/verify", isAuthenticated, async (req, res) => {
+  console.log(req.payload);
+  const currentUser = await User.findById(req.payload._id);
 
-    res.status(200).json({message: 'Token is valid', currentUser})
+  res.status(200).json({ message: "Token is valid", currentUser });
 });
 
 module.exports = router;
