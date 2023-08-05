@@ -3,7 +3,7 @@ const User = require("../models/User.model");
 const Pet = require("../models/Pet.model");
 const Form = require("../models/Form.model");
 const fileUploader = require("../config/cloudinary.config");
-
+const Feedback = require("../models/Feedback.model");
 // POST /api/new-pet
 router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
   try {
@@ -103,6 +103,29 @@ router.get("/your-forms/:customerId", async (req, res) => {
 
 
 });
-// GET /api/your-feedback
+router.get("/feedbacks/:customerId", async (req, res) => {
 
+ 
+  try {
+    const allFeedbacks = await Feedback.find({customerId:req.params.customerId}).populate('formId');
+    res.json(allFeedbacks);
+  } catch (error) {
+    res.json(error);
+  }
+
+
+});
+// GET /one feedback
+router.get("/feedback/:feedbackId", async (req, res) => {
+
+ 
+  try {
+    const feedback = await Feedback.findById(req.params.feedbackId).populate('formId');
+    res.json(feedback);
+  } catch (error) {
+    res.json(error);
+  }
+
+
+});
 module.exports = router;
