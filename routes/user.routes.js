@@ -32,10 +32,10 @@ router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
 });
 
 // GET /api/your-pets
-router.get("/your-pets/:costumerId", async (req, res) => {
-  const { costumerId } = req.params;
+router.get("/your-pets/:customerId", async (req, res) => {
+  const { customerId } = req.params;
   try {
-    const allPets = await Pet.find({ costumerId });
+    const allPets = await Pet.find({ customerId });
     res.json(allPets);
   } catch (error) {
     res.json(error);
@@ -75,13 +75,15 @@ router.put("/one-pet/:id", async (req, res) => {
 // POST /api/new-form
 router.post("/new-form", async (req, res) => {
   try {
-    const { request } = req.body;
+    const { request, customerId, petId } = req.body;
 
     if (request === "") {
       return res.status(400).json({ message: "Provide some text" });
     }
     const createdForm = await Form.create({
       request,
+      customerId,
+      petId
     });
     return res.status(201).json({ message: "Form successfully created" });
   } catch (error) {
@@ -89,7 +91,18 @@ router.post("/new-form", async (req, res) => {
   }
 });
 // GET /api/your-forms
-router.get("/your-forms", async (req, res) => {});
+router.get("/your-forms/:customerId", async (req, res) => {
+
+  const { customerId } = req.params;
+  try {
+    const allForms = await Form.find({ customerId }).populate('petId');
+    res.json(allForms);
+  } catch (error) {
+    res.json(error);
+  }
+
+
+});
 // GET /api/your-feedback
 
 module.exports = router;
