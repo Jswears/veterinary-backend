@@ -57,21 +57,42 @@ router.get("/one-pet/:id", async (req, res) => {
 });
 
 // PUT /api/one-pet/:id
-router.put("/one-pet/:id", async (req, res) => {
+router.put("/one-pet/:id", fileUploader.single("image"), async (req, res) => {
   const { id } = req.params;
-  const { name, age, specie, image } = req.body;
+
+  const payload = req.body;
+ delete payload.image
+  if (req.file) {
+    payload.image = req.file.path;
+  }
+
   try {
-    //req.body might work, if no, deconstruct.
     const updatedPet = await Pet.findByIdAndUpdate(
       id,
-      { name, age, specie, image },
-      { new: true }
+       payload 
     );
-    res.json(updatedPet);
+    console.log(updatedPet)
+  
   } catch (error) {
     res.json(error);
   }
 });
+
+
+// Delete /api/one-pet/:id
+router.delete("/one-pet/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    //req.body might work, if no, deconstruct.
+    const updatedPet = await Pet.findByIdAndDelete(
+      id
+    );
+    res.json({ message: "Pet deleted " });
+  } catch (error) {
+    res.json(error);
+  }
+});
+
 // POST /api/new-form
 router.post("/new-form", async (req, res) => {
   try {
