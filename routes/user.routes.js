@@ -8,7 +8,7 @@ const fileUploader = require("../config/cloudinary.config");
 router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
   try {
     const { name, age, specie, customerId } = req.body;
-    let image=''
+    let image = "";
     if (req.file) {
       image = req.file.path;
     }
@@ -16,7 +16,7 @@ router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
     if (name === "" || specie === "" || age === "") {
       return res.status(400).json({ message: "Provide name, species and age" });
     }
-    
+
     const createdPet = await Pet.create({
       name,
       age,
@@ -26,7 +26,7 @@ router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
     });
     return res.status(201).json({ message: "Pet created" });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -62,11 +62,7 @@ router.put("/one-pet/:id", async (req, res) => {
   const { name, age, specie, image } = req.body;
   try {
     //req.body might work, if no, deconstruct.
-    const updatedPet = await Pet.findByIdAndUpdate(
-      id,
-      { name, age, specie, image },
-      { new: true }
-    );
+    const updatedPet = await Pet.findByIdAndUpdate(id, { name, age, specie, image }, { new: true });
     res.json(updatedPet);
   } catch (error) {
     res.json(error);
