@@ -2,11 +2,8 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
-<<<<<<< HEAD
 const { isAuthenticated } = require("../middlewares/jwt.middleware"); // <== IMPORT
-=======
-const { isAuthenticated } = require("./../middlewares/jwt.middleware.js"); // <== IMPORT
->>>>>>> nicola
+
 const router = express.Router();
 
 router.get("/signup", (req, res) => {
@@ -18,7 +15,9 @@ router.post("/signup", async (req, res, next) => {
     const { fullname, email, password } = req.body;
 
     if (password === "" || fullname === "" || email === "") {
-      return res.status(400).json({ message: "Provide email,  password and full name " });
+      return res
+        .status(400)
+        .json({ message: "Provide email,  password and full name " });
     }
 
     // Use regex to validate the email format
@@ -71,10 +70,14 @@ router.post("/login", async (req, res) => {
       /* Check if the password is correct */
       if (bcrypt.compareSync(password, potentialUser.password)) {
         /* Sign the JWT */
-        const authToken = jwt.sign({ userId: potentialUser._id }, process.env.TOKEN_SECRET, {
-          algorithm: "HS256",
-          expiresIn: "24h",
-        });
+        const authToken = jwt.sign(
+          { userId: potentialUser._id },
+          process.env.TOKEN_SECRET,
+          {
+            algorithm: "HS256",
+            expiresIn: "24h",
+          }
+        );
         // Sending back the token to the front
         res.status(202).json({ token: authToken });
       } else {
