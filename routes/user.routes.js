@@ -1,0 +1,93 @@
+const router = require("express").Router();
+const User = require("../models/User.model");
+const Pet = require("../models/Pet.model");
+const Form = require("../models/Form.model");
+const fileUploader = require("../config/cloudinary.config");
+
+// POST /api/new-pet
+router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
+  try {
+    const { name, age, specie, image } = req.body;
+    if (req.file) {
+      image = req.file.path;
+    } else {
+      image = "";
+    }
+
+    if (name === "" || specie === "" || age === "") {
+      return res.status(400).json({ message: "Provide name, species and age" });
+    }
+    const createdPet = await Pet.create({
+      name,
+      age,
+      specie,
+      image: image || "",
+    });
+    return res.status(201).json({ message: "User created" });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// GET /api/your-pets
+router.get("/your-pets/:costumerId", async (req, res) => {
+  const { costumerId } = req.params;
+  try {
+    const allPets = await Pet.find({ costumerId });
+    res.json(allPets);
+  } catch (error) {
+    res.json(error);
+  }
+});
+// GET /api/one-pet/:id
+router.get("/one-pet/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const onePet = await Pet.findById(id);
+    if (!onePet) {
+      return res.status(404).json({ message: "Pet not found" });
+    }
+    res.json(onePet);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// PUT /api/one-pet/:id
+router.put("/one-pet/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name, age, specie, image } = req.body;
+  try {
+    //req.body might work, if no, deconstruct.
+    const updatedPet = await Pet.findByIdAndUpdate(
+      id,
+      { name, age, specie, image },
+      { new: true }
+    );
+    res.json(updatedPet);
+  } catch (error) {
+    res.json(error);
+  }
+});
+// POST /api/new-form
+router.post("/new-form", async (req, res) => {
+  try {
+    const { request } = req.body;
+
+    if (request === "") {
+      return res.status(400).json({ message: "Provide some text" });
+    }
+    const createdForm = await Form.create({
+      request,
+    });
+    return res.status(201).json({ message: "Form successfully created" });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+// GET /api/your-forms
+router.get("/your-forms", async (req, res) => {});
+// GET /api/your-feedback
+
+module.exports = router;
