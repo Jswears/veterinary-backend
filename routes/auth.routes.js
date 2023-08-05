@@ -2,7 +2,11 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
+<<<<<<< HEAD
 const { isAuthenticated } = require("../middlewares/jwt.middleware"); // <== IMPORT
+=======
+const { isAuthenticated } = require("./../middlewares/jwt.middleware.js"); // <== IMPORT
+>>>>>>> nicola
 const router = express.Router();
 
 router.get("/signup", (req, res) => {
