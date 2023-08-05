@@ -4,29 +4,32 @@ const Pet = require("../models/Pet.model");
 const Form = require("../models/Form.model");
 const fileUploader = require("../config/cloudinary.config");
 const Feedback = require("../models/Feedback.model");
+
 // POST /api/new-pet
 router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
+  console.log(req.file);
   try {
-    const { name, age, specie, customerId } = req.body;
-    let image=''
-    if (req.file) {
-      image = req.file.path;
+    const { name, age, specie, customerId, image } = req.body;
+    if (!req.file) {
+      return console.log("error");
     }
 
     if (name === "" || specie === "" || age === "") {
       return res.status(400).json({ message: "Provide name, species and age" });
     }
-    
+
     const createdPet = await Pet.create({
       name,
       age,
       specie,
-      image,
+      image: req.file.path,
       customerId,
     });
-    return res.status(201).json({ message: "Pet created" });
+    return res
+      .status(201)
+      .json({ message: "Pet created", fileUrl: req.file.path });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -83,7 +86,7 @@ router.post("/new-form", async (req, res) => {
     const createdForm = await Form.create({
       request,
       customerId,
-      petId
+      petId,
     });
     return res.status(201).json({ message: "Form successfully created" });
   } catch (error) {
@@ -92,40 +95,33 @@ router.post("/new-form", async (req, res) => {
 });
 // GET /api/your-forms
 router.get("/your-forms/:customerId", async (req, res) => {
-
   const { customerId } = req.params;
   try {
-    const allForms = await Form.find({ customerId }).populate('petId');
+    const allForms = await Form.find({ customerId }).populate("petId");
     res.json(allForms);
   } catch (error) {
     res.json(error);
   }
-
-
 });
 router.get("/feedbacks/:customerId", async (req, res) => {
-
- 
   try {
-    const allFeedbacks = await Feedback.find({customerId:req.params.customerId}).populate('formId');
+    const allFeedbacks = await Feedback.find({
+      customerId: req.params.customerId,
+    }).populate("formId");
     res.json(allFeedbacks);
   } catch (error) {
     res.json(error);
   }
-
-
 });
 // GET /one feedback
 router.get("/feedback/:feedbackId", async (req, res) => {
-
- 
   try {
-    const feedback = await Feedback.findById(req.params.feedbackId).populate('formId');
+    const feedback = await Feedback.findById(req.params.feedbackId).populate(
+      "formId"
+    );
     res.json(feedback);
   } catch (error) {
     res.json(error);
   }
-
-
 });
 module.exports = router;
