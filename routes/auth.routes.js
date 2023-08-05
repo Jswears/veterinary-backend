@@ -91,7 +91,7 @@ router.post("/login", async (req, res) => {
 router.get("/verify", isAuthenticated, async (req, res) => {
   console.log(req.payload);
   const currentUser = await User.findById(req.payload.userId);
-
+  console.log(currentUser);
   res.status(200).json({ message: "Token is valid", currentUser });
 });
 
