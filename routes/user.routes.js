@@ -5,6 +5,7 @@ const Form = require("../models/Form.model");
 const fileUploader = require("../config/cloudinary.config");
 const Feedback = require("../models/Feedback.model");
 const Complaint = require("../models/Complaint.model");
+const Medication = require("../models/Medication.model");
 
 // POST user/new-pet
 router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
@@ -136,4 +137,36 @@ router.post("/new-complaint", async (req, res) => {
   }
 });
 
+// GET all medication
+router.get("/medication", async (req, res) => {
+  try {
+    const allMedication = await Medication.find();
+    res.status(200).json(allMedication);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+//GET one medication
+router.get("/medication/:medId", async (req, res) => {
+  try {
+    const oneMedication = await Medication.findById(req.params.medId);
+    res.status(200).json(oneMedication);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// POST medication
+router.post("/medication", async (req, res) => {
+  try {
+    const createdMed = await Medication.create({ medName, amount, description, inStock });
+    res.status(201).json(createdMed);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
 module.exports = router;
