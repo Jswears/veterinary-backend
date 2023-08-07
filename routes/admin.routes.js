@@ -8,7 +8,8 @@ const Feedback = require("../models/Feedback.model");
 router.get("/all-forms", async (req, res) => {
   try {
     const allForms = await Form.find().populate("petId").populate("customerId");
-    res.status(201).json(allForms);
+    console.log(allForms);
+    res.status(200).json(allForms);
   } catch (error) {
     res.json(error);
   }
@@ -40,11 +41,22 @@ router.get("/form/:formId", async (req, res) => {
     res.json(error);
   }
 });
+
+// PATCH form
+router.patch("/form/:formId", async (req, res) => {
+  try {
+    const updateRead = await Form.findByIdAndUpdate(req.params.id, { read: true }, { new: true });
+    res.status(202).json({ message: "UPDATED" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 // GET /one feedback
 router.get("/feedback/:feedbackId", async (req, res) => {
   try {
     const feedback = await Feedback.findById(req.params.feedbackId).populate("formId");
-    res.json(feedback);
+    res.status(201).json(feedback);
   } catch (error) {
     res.json(error);
   }
@@ -70,6 +82,21 @@ router.post("/new-feedback", async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+
+// PATCH feedback
+router.patch("/feedback/:id", async (req, res) => {
+  try {
+    const updateRead = await Feedback.findByIdAndUpdate(
+      req.params.id,
+      { read: true },
+      { new: true }
+    );
+    res.status(202).json({ message: "UPDATED" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 // PUT  feedback
 router.put("/edit-feedback/:feedbackId", async (req, res) => {
   try {
