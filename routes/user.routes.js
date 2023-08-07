@@ -26,7 +26,9 @@ router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
       image: req.file.path,
       customerId,
     });
-    return res.status(201).json({ message: "Pet created", fileUrl: req.file.path });
+    return res
+      .status(201)
+      .json({ message: "Pet created", fileUrl: req.file.path });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
@@ -64,7 +66,11 @@ router.put("/one-pet/:id", async (req, res) => {
   const { name, age, specie, image } = req.body;
   try {
     //req.body might work, if no, deconstruct.
-    const updatedPet = await Pet.findByIdAndUpdate(id, { name, age, specie, image }, { new: true });
+    const updatedPet = await Pet.findByIdAndUpdate(
+      id,
+      { name, age, specie, image },
+      { new: true }
+    );
     res.json(updatedPet);
   } catch (error) {
     res.json(error);
@@ -111,7 +117,9 @@ router.get("/feedbacks/:customerId", async (req, res) => {
 // GET /one feedback
 router.get("/feedback/:feedbackId", async (req, res) => {
   try {
-    const feedback = await Feedback.findById(req.params.feedbackId).populate("formId");
+    const feedback = await Feedback.findById(req.params.feedbackId).populate(
+      "formId"
+    );
     res.json(feedback);
   } catch (error) {
     res.json(error);
@@ -121,12 +129,12 @@ router.get("/feedback/:feedbackId", async (req, res) => {
 // POST /user/complaint
 router.post("/new-complaint", async (req, res) => {
   try {
-    const { request, customerId, petId } = req.body;
-    if (request === "") {
+    const { complaint, customerId, petId } = req.body;
+    if (complaint === "") {
       return res.status(400).json({ message: "Provide some text" });
     }
     const createdComplaint = await Complaint.create({
-      request,
+      complaint,
       customerId,
       petId,
     });
