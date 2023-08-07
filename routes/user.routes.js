@@ -6,6 +6,7 @@ const fileUploader = require("../config/cloudinary.config");
 const Feedback = require("../models/Feedback.model");
 const Complaint = require("../models/Complaint.model");
 const Medication = require("../models/Medication.model");
+const stripe = require("stripe")("sk_test_Y17KokhC3SRYCQTLYiU5ZCD2");
 
 // POST user/new-pet
 router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
@@ -168,5 +169,26 @@ router.post("/medication", async (req, res) => {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
+});
+
+const calculateOrderAmount = (items) => {
+  return 1400;
+};
+
+router.post("/medication/create-payment-intent", async (req, res) => {
+  const { items } = req.body;
+
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: calculateOrderAmount(items),
+    currency: "usd",
+    automatic_payment_methods: {
+      enabled: true,
+    },
+  });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
 });
 module.exports = router;
