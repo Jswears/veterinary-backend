@@ -133,7 +133,9 @@ router.delete("/feedback/:feedbackId", async (req, res) => {
 // GET admin/all-complaints
 router.get("/all-complaints", async (req, res) => {
   try {
-    const allComplaintForms = await Complaint.find();
+    const allComplaintForms = await Complaint.find()
+      .populate("customerId")
+      .populate("petId");
     res.json(allComplaintForms);
   } catch (error) {
     res.json(error);

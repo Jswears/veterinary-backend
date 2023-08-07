@@ -3,32 +3,26 @@ const { Schema, model } = require("mongoose");
 // TODO: Please make sure you edit the User model to whatever makes sense in this case
 const complaintSchema = new Schema(
   {
-    request: {
+    complaint: {
       type: String,
       required: true,
       trim: true,
     },
     customerId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.ObjectId,
       ref: "User",
     },
     petId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.ObjectId,
       ref: "Pet",
     },
     read: {
       type: Boolean,
       default: false,
     },
-    adminResponse: {
-      type: String,
-      default: "",
-    },
-    respondedAt: {
-      type: Date,
-    },
   },
   {
+    // this second object adds extra properties: `createdAt` and `updatedAt`
     timestamps: true,
   }
 );
