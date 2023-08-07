@@ -4,8 +4,9 @@ const Pet = require("../models/Pet.model");
 const Form = require("../models/Form.model");
 const fileUploader = require("../config/cloudinary.config");
 const Feedback = require("../models/Feedback.model");
+const Complaint = require("../models/Complaint.model");
 
-// POST /api/new-pet
+// POST user/new-pet
 router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
   console.log(req.file);
   try {
@@ -32,7 +33,7 @@ router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
   }
 });
 
-// GET /api/your-pets
+// GET /user/your-pets
 router.get("/your-pets/:customerId", async (req, res) => {
   const { customerId } = req.params;
   try {
@@ -42,7 +43,7 @@ router.get("/your-pets/:customerId", async (req, res) => {
     res.json(error);
   }
 });
-// GET /api/one-pet/:id
+// GET /user/one-pet/:id
 router.get("/one-pet/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -57,7 +58,7 @@ router.get("/one-pet/:id", async (req, res) => {
   }
 });
 
-// PUT /api/one-pet/:id
+// PUT /user/one-pet/:id
 router.put("/one-pet/:id", async (req, res) => {
   const { id } = req.params;
   const { name, age, specie, image } = req.body;
@@ -69,7 +70,7 @@ router.put("/one-pet/:id", async (req, res) => {
     res.json(error);
   }
 });
-// POST /api/new-form
+// POST /user/new-form
 router.post("/new-form", async (req, res) => {
   try {
     const { request, customerId, petId } = req.body;
@@ -87,7 +88,7 @@ router.post("/new-form", async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
-// GET /api/your-forms
+// GET /user/your-forms
 router.get("/your-forms/:customerId", async (req, res) => {
   const { customerId } = req.params;
   try {
@@ -116,4 +117,23 @@ router.get("/feedback/:feedbackId", async (req, res) => {
     res.json(error);
   }
 });
+
+// POST /user/complaint
+router.post("/new-complaint", async (req, res) => {
+  try {
+    const { request, customerId, petId } = req.body;
+    if (request === "") {
+      return res.status(400).json({ message: "Provide some text" });
+    }
+    const createdComplaint = await Complaint.create({
+      request,
+      customerId,
+      petId,
+    });
+    return res.status(201).json({ message: "Complaint has been sent" });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;
