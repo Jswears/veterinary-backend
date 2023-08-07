@@ -35,20 +35,27 @@ router.get("/all-feedback", async (req, res) => {
 // GET /one form
 router.get("/form/:formId", async (req, res) => {
   try {
-    const form = await Form.findById(req.params.formId)
-      .populate("petId")
-      .populate("customerId");
+    const form = await Form.findById(req.params.formId).populate("petId").populate("customerId");
     res.json(form);
   } catch (error) {
     res.json(error);
   }
 });
+
+// PATCH form
+router.patch("/form/:formId", async (req, res) => {
+  try {
+    const updateRead = await Form.findByIdAndUpdate(req.params.id, { read: true }, { new: true });
+    res.status(202).json({ message: "UPDATED" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 // GET /one feedback
 router.get("/feedback/:feedbackId", async (req, res) => {
   try {
-    const feedback = await Feedback.findById(req.params.feedbackId).populate(
-      "formId"
-    );
+    const feedback = await Feedback.findById(req.params.feedbackId).populate("formId");
     res.json(feedback);
   } catch (error) {
     res.json(error);
@@ -75,6 +82,21 @@ router.post("/new-feedback", async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+
+// PATCH feedback
+router.patch("/feedback/:id", async (req, res) => {
+  try {
+    const updateRead = await Feedback.findByIdAndUpdate(
+      req.params.id,
+      { read: true },
+      { new: true }
+    );
+    res.status(202).json({ message: "UPDATED" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 // PUT  feedback
 router.put("/edit-feedback/:feedbackId", async (req, res) => {
   try {
@@ -83,16 +105,13 @@ router.put("/edit-feedback/:feedbackId", async (req, res) => {
     if (medicalHistory === "" || terapy === "") {
       return res.status(400).json({ message: "Provide some text" });
     }
-    const createdFeedback = await Feedback.findByIdAndUpdate(
-      req.params.feedbackId,
-      {
-        medicalHistory,
-        terapy,
-        tips,
-        customerId,
-        formId,
-      }
-    );
+    const createdFeedback = await Feedback.findByIdAndUpdate(req.params.feedbackId, {
+      medicalHistory,
+      terapy,
+      tips,
+      customerId,
+      formId,
+    });
     return res.status(201).json({ message: "Feedback successfully updated" });
   } catch (error) {
     console.log(error);
