@@ -142,4 +142,16 @@ router.get("/all-complaints", async (req, res) => {
   }
 });
 
+
+// PATCH complaint
+router.patch("/complaint/:complaintId", async (req, res) => {
+  try {
+ 
+    const updateRead = await Complaint.findByIdAndUpdate(req.params.complaintId, { read: true }, { new: true });
+    res.status(202).json({ message: "UPDATED" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 module.exports = router;
