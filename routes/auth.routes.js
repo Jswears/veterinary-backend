@@ -14,7 +14,9 @@ router.post("/signup", async (req, res, next) => {
     const { fullname, email, password } = req.body;
 
     if (password === "" || fullname === "" || email === "") {
-      return res.status(400).json({ message: "Provide email,  password and full name " });
+      return res
+        .status(400)
+        .json({ message: "Provide email,  password and full name " });
     }
 
     // Use regex to validate the email format
@@ -51,7 +53,7 @@ router.post("/signup", async (req, res, next) => {
     });
 
     //New object without password
-    return res.status(201).json({ messgae: "User created" });
+    return res.status(201).json({ message: "User created" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
@@ -67,10 +69,14 @@ router.post("/login", async (req, res) => {
       /* Check if the password is correct */
       if (bcrypt.compareSync(password, potentialUser.password)) {
         /* Sign the JWT */
-        const authToken = jwt.sign({ userId: potentialUser._id }, process.env.TOKEN_SECRET, {
-          algorithm: "HS256",
-          expiresIn: "24h",
-        });
+        const authToken = jwt.sign(
+          { userId: potentialUser._id },
+          process.env.TOKEN_SECRET,
+          {
+            algorithm: "HS256",
+            expiresIn: "24h",
+          }
+        );
         // Sending back the token to the front
         res.status(202).json({ token: authToken });
       } else {
