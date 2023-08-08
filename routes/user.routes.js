@@ -100,7 +100,7 @@ router.post("/new-form", async (req, res) => {
 router.get("/your-forms/:customerId", async (req, res) => {
   const { customerId } = req.params;
   try {
-    const allForms = await Form.find({ customerId }).populate("petId");
+    const allForms = await Form.find({ customerId }).populate("petId").sort([['createdAt', -1]]);
     res.json(allForms);
   } catch (error) {
     res.json(error);
@@ -110,7 +110,7 @@ router.get("/feedbacks/:customerId", async (req, res) => {
   try {
     const allFeedbacks = await Feedback.find({
       customerId: req.params.customerId,
-    }).populate("formId");
+    }).populate("formId").sort([['createdAt', -1]]);
     res.json(allFeedbacks);
   } catch (error) {
     res.json(error);

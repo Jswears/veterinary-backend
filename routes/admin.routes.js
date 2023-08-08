@@ -8,7 +8,7 @@ const Complaint = require("../models/Complaint.model");
 // GET /all form
 router.get("/all-forms", async (req, res) => {
   try {
-    const allForms = await Form.find().populate("petId").populate("customerId");
+    const allForms = await Form.find().populate("petId").populate("customerId").sort([['createdAt', -1]]);
     res.json(allForms);
   } catch (error) {
     res.json(error);
@@ -26,7 +26,7 @@ router.get("/all-pets", async (req, res) => {
 // GET /all feedback
 router.get("/all-feedback", async (req, res) => {
   try {
-    const allFeedback = await Feedback.find().populate("formId");
+    const allFeedback = await Feedback.find().populate("formId").sort([['createdAt', -1]]);;
     res.json(allFeedback);
   } catch (error) {
     res.json(error);
@@ -135,7 +135,7 @@ router.get("/all-complaints", async (req, res) => {
   try {
     const allComplaintForms = await Complaint.find()
       .populate("customerId")
-      .populate("petId");
+      .populate("petId").sort([['createdAt', -1]]);
     res.json(allComplaintForms);
   } catch (error) {
     res.json(error);
