@@ -47,11 +47,8 @@ router.get("/form/:formId", async (req, res) => {
 // PATCH form
 router.patch("/form/:formId", async (req, res) => {
   try {
-    const updateRead = await Form.findByIdAndUpdate(
-      req.params.id,
-      { read: true },
-      { new: true }
-    );
+ 
+    const updateRead = await Form.findByIdAndUpdate(req.params.formId, { read: true }, { new: true });
     res.status(202).json({ message: "UPDATED" });
   } catch (error) {
     console.log(error);
@@ -149,6 +146,18 @@ router.get("/all-complaints", async (req, res) => {
     res.json(allComplaintForms);
   } catch (error) {
     res.json(error);
+  }
+});
+
+
+// PATCH complaint
+router.patch("/complaint/:complaintId", async (req, res) => {
+  try {
+ 
+    const updateRead = await Complaint.findByIdAndUpdate(req.params.complaintId, { read: true }, { new: true });
+    res.status(202).json({ message: "UPDATED" });
+  } catch (error) {
+    console.log(error);
   }
 });
 
