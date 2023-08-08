@@ -28,9 +28,7 @@ router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
       image: req.file.path,
       customerId,
     });
-    return res
-      .status(201)
-      .json({ message: "Pet created", fileUrl: req.file.path });
+    return res.status(201).json({ message: "Pet created", fileUrl: req.file.path });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
@@ -68,11 +66,7 @@ router.put("/one-pet/:id", async (req, res) => {
   const { name, age, specie, image } = req.body;
   try {
     //req.body might work, if no, deconstruct.
-    const updatedPet = await Pet.findByIdAndUpdate(
-      id,
-      { name, age, specie, image },
-      { new: true }
-    );
+    const updatedPet = await Pet.findByIdAndUpdate(id, { name, age, specie, image }, { new: true });
     res.json(updatedPet);
   } catch (error) {
     res.json(error);
@@ -119,9 +113,7 @@ router.get("/feedbacks/:customerId", async (req, res) => {
 // GET /one feedback
 router.get("/feedback/:feedbackId", async (req, res) => {
   try {
-    const feedback = await Feedback.findById(req.params.feedbackId).populate(
-      "formId"
-    );
+    const feedback = await Feedback.findById(req.params.feedbackId).populate("formId");
     res.json(feedback);
   } catch (error) {
     res.json(error);
@@ -170,8 +162,9 @@ router.get("/medication/:medId", async (req, res) => {
 
 // POST medication
 router.post("/medication", async (req, res) => {
+  const { medName, amount, description, price, image } = req.body;
   try {
-    const createdMed = await Medication.create({ medName, amount, description, inStock });
+    const createdMed = await Medication.create({ medName, amount, description, price, image });
     res.status(201).json(createdMed);
   } catch (error) {
     console.log(error);
