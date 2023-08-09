@@ -222,13 +222,16 @@ router.put(
   fileUploader.single("image"),
   async (req, res) => {
     const { id } = req.params;
-    const payload = req.body;
+    const payload = { ...req.body }
     delete payload.image;
 
     if (req.file) {
       payload.image = req.file.path;
     }
-
+    if(payload.amount===0) {
+      payload.inStock=false
+    }
+   
     try {
       const updatedMedication = await Medication.findByIdAndUpdate(
         id,

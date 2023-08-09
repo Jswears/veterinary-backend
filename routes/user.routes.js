@@ -65,13 +65,16 @@ router.get("/one-pet/:id", async (req, res) => {
 // PUT /user/one-pet/:id
 router.put("/one-pet/:id", fileUploader.single("image"), async (req, res) => {
   const { id } = req.params;
-  const payload = req.body;
-  delete payload.image;
+  const payload = { ...req.body }
+
 
   if (req.file) {
-    payload.image = req.file.path;
+     payload.image = req.file.path;
   }
-
+  else{
+    delete payload.image;
+  }
+console.log(payload)
   try {
     const updatedPet = await Pet.findByIdAndUpdate(id, payload, { new: true });
     res.status(201).json(updatedPet);
