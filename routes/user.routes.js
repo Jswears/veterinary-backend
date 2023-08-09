@@ -187,24 +187,6 @@ router.get("/medication/:medId", async (req, res) => {
   }
 });
 
-// POST medication
-router.post("/medication", async (req, res) => {
-  const { medName, amount, description, price, image } = req.body;
-  try {
-    const createdMed = await Medication.create({
-      medName,
-      amount,
-      description,
-      price,
-      image,
-    });
-    res.status(201).json(createdMed);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
 const calculateOrderAmount = (items) => {
   return 1400;
 };

@@ -4,11 +4,16 @@ const Pet = require("../models/Pet.model");
 const Form = require("../models/Form.model");
 const Feedback = require("../models/Feedback.model");
 const Complaint = require("../models/Complaint.model");
+const Medication = require("../models/Medication.model");
+const fileUploader = require("../config/cloudinary.config");
 
 // GET /all form
 router.get("/all-forms", async (req, res) => {
   try {
-    const allForms = await Form.find().populate("petId").populate("customerId").sort([['createdAt', -1]]);
+    const allForms = await Form.find()
+      .populate("petId")
+      .populate("customerId")
+      .sort([["createdAt", -1]]);
     res.json(allForms);
   } catch (error) {
     res.json(error);
@@ -26,7 +31,13 @@ router.get("/all-pets", async (req, res) => {
 // GET /all feedback
 router.get("/all-feedback", async (req, res) => {
   try {
+<<<<<<< HEAD
     const allFeedback = await Feedback.find().populate("formId").populate("customerId").sort([['createdAt', -1]]);;
+=======
+    const allFeedback = await Feedback.find()
+      .populate("formId")
+      .sort([["createdAt", -1]]);
+>>>>>>> joaquin
     res.json(allFeedback);
   } catch (error) {
     res.json(error);
@@ -47,8 +58,11 @@ router.get("/form/:formId", async (req, res) => {
 // PATCH form
 router.patch("/form/:formId", async (req, res) => {
   try {
- 
-    const updateRead = await Form.findByIdAndUpdate(req.params.formId, { read: true }, { new: true });
+    const updateRead = await Form.findByIdAndUpdate(
+      req.params.formId,
+      { read: true },
+      { new: true }
+    );
     res.status(202).json({ message: "UPDATED" });
   } catch (error) {
     console.log(error);
@@ -142,19 +156,22 @@ router.get("/all-complaints", async (req, res) => {
   try {
     const allComplaintForms = await Complaint.find()
       .populate("customerId")
-      .populate("petId").sort([['createdAt', -1]]);
+      .populate("petId")
+      .sort([["createdAt", -1]]);
     res.json(allComplaintForms);
   } catch (error) {
     res.json(error);
   }
 });
 
-
 // PATCH complaint
 router.patch("/complaint/:complaintId", async (req, res) => {
   try {
- 
-    const updateRead = await Complaint.findByIdAndUpdate(req.params.complaintId, { read: true }, { new: true });
+    const updateRead = await Complaint.findByIdAndUpdate(
+      req.params.complaintId,
+      { read: true },
+      { new: true }
+    );
     res.status(202).json({ message: "UPDATED" });
   } catch (error) {
     console.log(error);
@@ -193,4 +210,61 @@ router.delete("/customer/:id", async(req,res)=>{
 
 
 
+// MEDICATION
+
+// POST medication
+router.post("/medication", async (req, res) => {
+  const { medName, amount, description, price, image } = req.body;
+
+  try {
+    const createdMed = await Medication.create({
+      medName,
+      amount,
+      description,
+      price,
+      image,
+    });
+    res.status(201).json(createdMed);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+router.put(
+  "/one-medication/:id",
+  fileUploader.single("image"),
+  async (req, res) => {
+    const { id } = req.params;
+    const payload = req.body;
+    delete payload.image;
+
+    if (req.file) {
+      payload.image = req.file.path;
+    }
+
+    try {
+      const updatedMedication = await Medication.findByIdAndUpdate(
+        id,
+        payload,
+        {
+          new: true,
+        }
+      );
+      res.status(201).json(updatedMedication);
+    } catch (error) {
+      res.json(error);
+    }
+  }
+);
+
+//DELETE  Feedback
+router.delete("/one-medication/:id", async (req, res) => {
+  try {
+    await Medication.findByIdAndDelete(req.params.id);
+    return res.status(201).json({ message: "Medication Deleted" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
 module.exports = router;
