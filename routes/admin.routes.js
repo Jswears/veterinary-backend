@@ -26,7 +26,7 @@ router.get("/all-pets", async (req, res) => {
 // GET /all feedback
 router.get("/all-feedback", async (req, res) => {
   try {
-    const allFeedback = await Feedback.find().populate("formId").sort([['createdAt', -1]]);;
+    const allFeedback = await Feedback.find().populate("formId").populate("customerId").sort([['createdAt', -1]]);;
     res.json(allFeedback);
   } catch (error) {
     res.json(error);
@@ -160,5 +160,37 @@ router.patch("/complaint/:complaintId", async (req, res) => {
     console.log(error);
   }
 });
+
+
+//get list of customers
+router.get("/all-customers", async(req,res)=>{
+
+ try {
+   const customers=await User.find()
+   res.status(200).json(customers)
+ } catch (error) {
+  console.log(error)
+ }
+
+})
+router.delete("/customer/:id", async(req,res)=>{
+
+   try {
+    
+    await User.findByIdAndDelete(req.params.id)
+    //we need to cancel every data from the customer 
+    await Pet.deleteMany({customerId: req.params.id})
+    await Form.deleteMany({customerId: req.params.id})
+    await Feedback.deleteMany({customerId: req.params.id})
+    await Complaint.deleteMany({customerId: req.params.id})
+    return res.status(201).json({ message: "customer successfully deleted" });
+
+   } catch (error) {
+    console.log(error)
+   }
+
+})
+
+
 
 module.exports = router;
