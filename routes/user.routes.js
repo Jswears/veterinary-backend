@@ -79,6 +79,19 @@ router.put("/one-pet/:id", fileUploader.single("image"), async (req, res) => {
     res.json(error);
   }
 });
+
+// DELETE pet
+router.delete("/one-pet/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await Pet.findByIdAndDelete(id);
+    res.status(201).json({ message: "Deleted" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // POST /user/new-form
 router.post("/new-form", async (req, res) => {
   try {
@@ -109,6 +122,7 @@ router.get("/your-forms/:customerId", async (req, res) => {
     res.json(error);
   }
 });
+
 router.get("/feedbacks/:customerId", async (req, res) => {
   try {
     const allFeedbacks = await Feedback.find({
