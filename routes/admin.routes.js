@@ -205,6 +205,11 @@ router.put(
     if (req.file) {
       payload.image = req.file.path;
     }
+    if (payload.amount === 0) {
+      payload.inStock = false;
+    } else if (payload.amount > 0) {
+      payload.inStock = true;
+    }
 
     try {
       const updatedMedication = await Medication.findByIdAndUpdate(
