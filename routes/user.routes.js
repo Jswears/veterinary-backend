@@ -28,7 +28,9 @@ router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
       image: req.file.path,
       customerId,
     });
-    return res.status(201).json({ message: "Pet created", fileUrl: req.file.path });
+    return res
+      .status(201)
+      .json({ message: "Pet created", fileUrl: req.file.path });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
@@ -61,13 +63,18 @@ router.get("/one-pet/:id", async (req, res) => {
 });
 
 // PUT /user/one-pet/:id
-router.put("/one-pet/:id", async (req, res) => {
+router.put("/one-pet/:id", fileUploader.single("image"), async (req, res) => {
   const { id } = req.params;
-  const { name, age, specie, image } = req.body;
+  const payload = req.body;
+  delete payload.image;
+
+  if (req.file) {
+    payload.image = req.file.path;
+  }
+
   try {
-    //req.body might work, if no, deconstruct.
-    const updatedPet = await Pet.findByIdAndUpdate(id, { name, age, specie, image }, { new: true });
-    res.json(updatedPet);
+    const updatedPet = await Pet.findByIdAndUpdate(id, payload, { new: true });
+    res.status(201).json(updatedPet);
   } catch (error) {
     res.json(error);
   }
@@ -94,7 +101,9 @@ router.post("/new-form", async (req, res) => {
 router.get("/your-forms/:customerId", async (req, res) => {
   const { customerId } = req.params;
   try {
-    const allForms = await Form.find({ customerId }).populate("petId").sort([['createdAt', -1]]);
+    const allForms = await Form.find({ customerId })
+      .populate("petId")
+      .sort([["createdAt", -1]]);
     res.json(allForms);
   } catch (error) {
     res.json(error);
@@ -104,7 +113,9 @@ router.get("/feedbacks/:customerId", async (req, res) => {
   try {
     const allFeedbacks = await Feedback.find({
       customerId: req.params.customerId,
-    }).populate("formId").sort([['createdAt', -1]]);
+    })
+      .populate("formId")
+      .sort([["createdAt", -1]]);
     res.json(allFeedbacks);
   } catch (error) {
     res.json(error);
@@ -113,7 +124,9 @@ router.get("/feedbacks/:customerId", async (req, res) => {
 // GET /one feedback
 router.get("/feedback/:feedbackId", async (req, res) => {
   try {
-    const feedback = await Feedback.findById(req.params.feedbackId).populate("formId");
+    const feedback = await Feedback.findById(req.params.feedbackId).populate(
+      "formId"
+    );
     res.json(feedback);
   } catch (error) {
     res.json(error);
@@ -164,7 +177,13 @@ router.get("/medication/:medId", async (req, res) => {
 router.post("/medication", async (req, res) => {
   const { medName, amount, description, price, image } = req.body;
   try {
-    const createdMed = await Medication.create({ medName, amount, description, price, image });
+    const createdMed = await Medication.create({
+      medName,
+      amount,
+      description,
+      price,
+      image,
+    });
     res.status(201).json(createdMed);
   } catch (error) {
     console.log(error);
