@@ -72,6 +72,19 @@ router.put("/one-pet/:id", async (req, res) => {
     res.json(error);
   }
 });
+
+// DELETE pet
+router.delete("/one-pet/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await Pet.findByIdAndDelete(id);
+    res.status(201).json({ message: "Deleted" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // POST /user/new-form
 router.post("/new-form", async (req, res) => {
   try {
@@ -94,17 +107,22 @@ router.post("/new-form", async (req, res) => {
 router.get("/your-forms/:customerId", async (req, res) => {
   const { customerId } = req.params;
   try {
-    const allForms = await Form.find({ customerId }).populate("petId").sort([['createdAt', -1]]);
+    const allForms = await Form.find({ customerId })
+      .populate("petId")
+      .sort([["createdAt", -1]]);
     res.json(allForms);
   } catch (error) {
     res.json(error);
   }
 });
+
 router.get("/feedbacks/:customerId", async (req, res) => {
   try {
     const allFeedbacks = await Feedback.find({
       customerId: req.params.customerId,
-    }).populate("formId").sort([['createdAt', -1]]);
+    })
+      .populate("formId")
+      .sort([["createdAt", -1]]);
     res.json(allFeedbacks);
   } catch (error) {
     res.json(error);
