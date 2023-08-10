@@ -33,6 +33,7 @@ router.get("/all-feedback", async (req, res) => {
   try {
     const allFeedback = await Feedback.find()
       .populate("formId")
+      .populate("customerId")
       .sort([["createdAt", -1]]);
     res.json(allFeedback);
   } catch (error) {
