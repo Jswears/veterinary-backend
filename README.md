@@ -1,4 +1,4 @@
-# VetApp (Server)
+# [VetApp](https://vetappwecare.netlify.app/) (Server)
 
 <br>
 
@@ -202,13 +202,6 @@ Medication model
     - petId
 - GET /user/medication
 - GET /user/medication/:medId
-- POST /user/medication
-  - body:
-    - medName
-    - amount
-    - description
-    - price
-    - image
 - POST /user/medication/create-payment-intent
   - body:
     - items
@@ -236,6 +229,17 @@ Medication model
 - DELETE /admin/feedback/:feedbackId
 - GET /admin/all-complaints
 - PATCH /admin/complaint/:complaintId
+- GET /admin/all-customers
+- DELETE /admin/customer/:id
+- POST /admin/medication
+  - body:
+    - medName
+    - amount
+    - description
+    - price
+    - image
+- PUT /admin/one-medication/:id
+- DELETE /admin/one-medication/:id
 
 <br>
 
@@ -247,7 +251,13 @@ Medication model
 
 [Deploy Link](https://vetapp.adaptable.app/)
 
-<br>
+### Collaborators
+
+[Joaquin Swears Salinas](https://github.com/Jswears)
+
+[Nicola Pasa](https://github.com/nicolapasa)
+
+[Andrej Delinac](https://github.com/Jerdnaa)
 
 ### Slides
 
