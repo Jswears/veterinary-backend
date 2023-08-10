@@ -33,6 +33,7 @@ router.get("/all-feedback", async (req, res) => {
   try {
     const allFeedback = await Feedback.find()
       .populate("formId")
+      .populate("customerId")
       .sort([["createdAt", -1]]);
     res.json(allFeedback);
   } catch (error) {
@@ -228,12 +229,8 @@ router.put(
     if (req.file) {
       payload.image = req.file.path;
     }
-    if (payload.amount === 0) {
-      payload.inStock = false;
-    } else if (payload.amount > 0) {
-      payload.inStock = true;
-    }
-
+   
+   
     try {
       const updatedMedication = await Medication.findByIdAndUpdate(
         id,

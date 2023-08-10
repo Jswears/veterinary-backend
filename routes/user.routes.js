@@ -10,27 +10,27 @@ const stripe = require("stripe")("sk_test_Y17KokhC3SRYCQTLYiU5ZCD2");
 
 // POST user/new-pet
 router.post("/new-pet", fileUploader.single("image"), async (req, res) => {
-  console.log(req.file);
+ 
   try {
-    const { name, age, specie, customerId, image } = req.body;
-    if (!req.file) {
-      return console.log("error");
-    }
+   // const { name, age, specie, customerId, image } = req.body;
+   const payload = { ...req.body }
 
-    if (name === "" || specie === "" || age === "") {
+   if (req.file) {
+    payload.image = req.file.path;
+ }
+ else{
+   delete payload.image;
+ }
+
+    if (payload.name === "" || payload.specie === "" || payload.age === "") {
       return res.status(400).json({ message: "Provide name, species and age" });
     }
-
-    const createdPet = await Pet.create({
-      name,
-      age,
-      specie,
-      image: req.file.path,
-      customerId,
-    });
+    const createdPet = await Pet.create(
+      payload
+    );
     return res
       .status(201)
-      .json({ message: "Pet created", fileUrl: req.file.path });
+      .json({ message: "Pet created" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
