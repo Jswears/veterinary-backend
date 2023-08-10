@@ -1,6 +1,4 @@
-# VetApp (Server)
-
-## [Go to the App!](https://vetappwecare.netlify.app/)
+# [VetApp](https://vetappwecare.netlify.app/) (Server)
 
 <br>
 
